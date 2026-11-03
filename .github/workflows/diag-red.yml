@@ -1,0 +1,23 @@
+name: Diagnóstico de red (temporal)
+on:
+  push:
+    branches: ["diag/**"]
+jobs:
+  red:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Probar cada fuente por IPv4 e IPv6
+        run: |
+          probe() {
+            for v in 4 6; do
+              r=$(curl -$v -s -o /dev/null -A "observatorio-colombia/0.1" --connect-timeout 10 --max-time 40 -w "%{http_code} %{time_connect}s %{time_total}s" "$2" 2>&1) || r="ERR($?) $r"
+              echo "$1 IPv$v: $r"
+            done
+          }
+          probe datos.gov.co "https://www.datos.gov.co/resource/sbwg-7ju4.json?\$limit=1"
+          probe usgs "https://earthquake.usgs.gov/fdsnws/event/1/count?format=geojson&minmagnitude=6"
+          probe firms "https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_South_America_24h.csv"
+          probe dane "https://geoportal.dane.gov.co/mparcgis/rest/services/MGN2024/Serv_CapasMGN_2024/FeatureServer/317?f=json"
+          probe igac "https://mapas.igac.gov.co/server/rest/services/ObservatorioInmobiliario/MunicipiosOIC/FeatureServer/1?f=json"
+          echo; getent ahosts firms.modaps.eosdis.nasa.gov | head -4
