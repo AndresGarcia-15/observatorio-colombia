@@ -1,0 +1,96 @@
+name: Pipeline de datos
+
+on:
+  schedule:
+    # 11:17 UTC = 6:17 a. m. en Colombia. El minuto impar evita la congestión de las :00 en GitHub.
+    - cron: "17 11 * * *"
+  workflow_dispatch:
+    inputs:
+      fuentes:
+        description: "Fuentes a actualizar, separadas por espacio (vacío = todas)"
+        required: false
+        default: ""
+      desde:
+        description: "Recargar desde esta fecha (AAAA-MM-DD), opcional"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pipeline-datos
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Traer los datos publicados (rama data)
+        run: |
+          mkdir -p data
+          if git ls-remote --exit-code --heads origin data > /dev/null; then
+            git fetch --depth 1 origin data
+            git archive FETCH_HEAD | tar -x -C data
+          else
+            echo "La rama data aún no existe: primera ejecución."
+          fi
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: pipeline/uv.lock
+
+      - name: Instalar dependencias
+        working-directory: pipeline
+        run: uv sync --frozen
+
+      - name: Ejecutar el pipeline
+        id: run
+        continue-on-error: true
+        working-directory: pipeline
+        env:
+          OBS_DATA_DIR: ${{ github.workspace }}/data
+          FUENTES: ${{ inputs.fuentes }}
+          DESDE: ${{ inputs.desde }}
+        run: |
+          args=()
+          if [ -n "$DESDE" ]; then args+=(--desde "$DESDE"); fi
+          # shellcheck disable=SC2086
+          uv run observatorio run $FUENTES "${args[@]}"
+
+      - name: Resumen
+        if: always()
+        working-directory: pipeline
+        env:
+          OBS_DATA_DIR: ${{ github.workspace }}/data
+        run: |
+          {
+            echo '### Estado de las fuentes'
+            echo '```'
+            uv run observatorio status
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publicar en la rama data
+        # Un solo commit que se reemplaza cada día: el histórico vive dentro de los
+        # Parquet, así el repositorio no crece con cada actualización.
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp docs/DATOS.md data/README.md
+          export GIT_INDEX_FILE="$RUNNER_TEMP/data.index"
+          cd data
+          git --git-dir=../.git --work-tree=. add -A .
+          tree=$(git --git-dir=../.git write-tree)
+          commit=$(git --git-dir=../.git commit-tree "$tree" -m "Datos $(date -u +%Y-%m-%dT%H:%MZ)")
+          git --git-dir=../.git push --force origin "$commit:refs/heads/data"
+
+      - name: Fallar si alguna fuente falló
+        if: steps.run.outcome == 'failure'
+        run: |
+          echo "::error::Al menos una fuente falló. Revisa el resumen y estado.json."
+          exit 1

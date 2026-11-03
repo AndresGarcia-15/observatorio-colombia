@@ -1,0 +1,17 @@
+# Datos generados: se publican en la rama data, no en main
+/data/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Node (fase 3)
+node_modules/
+dist/
+
+# Sistema
+.DS_Store
+*.tmp
