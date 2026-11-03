@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import gzip
 import json
 from pathlib import Path
 
@@ -9,6 +10,19 @@ import numpy as np
 import polars as pl
 import shapely
 from shapely.geometry import shape
+
+PACKAGED_REFERENCE = Path(__file__).parent / "reference" / "municipios_mgn2024.geojson.gz"
+
+
+def reference_path(data_dir: Path) -> Path:
+    """Capa descargada más reciente o, si no hay, la copia del MGN 2024 incluida en el paquete."""
+    downloaded = data_dir / "referencia" / "municipios.geojson"
+    return downloaded if downloaded.exists() else PACKAGED_REFERENCE
+
+
+def read_geojson(path: Path) -> dict:
+    raw = gzip.decompress(path.read_bytes()) if path.suffix == ".gz" else path.read_bytes()
+    return json.loads(raw.decode("utf-8"))
 
 
 class MunicipioLocator:
@@ -21,8 +35,7 @@ class MunicipioLocator:
 
     @classmethod
     def from_geojson(cls, path: Path) -> MunicipioLocator:
-        data = json.loads(path.read_text(encoding="utf-8"))
-        return cls(data["features"])
+        return cls(read_geojson(path)["features"])
 
     def locate(self, lon: list[float] | np.ndarray, lat: list[float] | np.ndarray) -> list[str | None]:
         lon = np.asarray(lon, dtype=float)

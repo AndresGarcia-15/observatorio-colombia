@@ -46,3 +46,15 @@ def test_error_keeps_last_known_coverage(data_dir):
 def test_unknown_source_returns_usage_error(data_dir, capsys):
     assert cli.main(["run", "no-existe"]) == 2
     assert "desconocidas" in capsys.readouterr().err
+
+
+def test_warning_is_not_a_failure(data_dir):
+    class Fallback(Ok):
+        id = "fallback"
+
+        def run(self, ctx):
+            return RunResult(changed=False, rows_total=1, warning=True, message="se usó el respaldo")
+
+    assert cli.run_sources([Fallback()], since=None, force=False) == 0
+    entry = json.loads((data_dir / "estado.json").read_text())["fuentes"]["fallback"]
+    assert entry["estado"] == "aviso"

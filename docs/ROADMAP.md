@@ -23,7 +23,7 @@ Leyenda: ✅ hecho · 🔄 en curso · ⬜ pendiente
 Actualización diaria automática con GitHub Actions. Los datos se publican en la rama `data` como Parquet.
 
 - ✅ Núcleo: cliente HTTP con reintentos, almacenamiento Parquet particionado con *upsert*, manifiesto `estado.json`.
-- ✅ Capa de referencia: límites municipales del MGN (DANE, con respaldo automático en la copia del IGAC si el DANE no responde).
+- ✅ Capa de referencia: copia del MGN 2024 incluida en el paquete, con renovación mensual desde el DANE o el IGAC que nunca bloquea al resto del pipeline.
 - ✅ IDEAM temperatura y precipitación diarias por estación, con control de calidad.
 - ✅ NASA FIRMS: fuegos activos VIIRS (3 satélites), ubicados por municipio.
 - ✅ USGS: sismos M≥4 desde 1973, con revisiones de los últimos 30 días.

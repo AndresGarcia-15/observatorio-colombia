@@ -46,7 +46,7 @@ def run_sources(sources: list[Source], since: date | None, force: bool) -> int:
                 s.estado, s.mensaje = "error", f"{type(exc).__name__}: {exc}"[:500]
                 log.error("✗ %s: %s", src.id, s.mensaje)
             else:
-                s.estado = "ok" if res.changed else "sin_cambios"
+                s.estado = "aviso" if res.warning else ("ok" if res.changed else "sin_cambios")
                 s.mensaje, s.filas, s.filas_nuevas, s.archivos = res.message, res.rows_total, res.rows_new, res.files
                 if res.coverage != (None, None):
                     s.cobertura = {"desde": res.coverage[0], "hasta": res.coverage[1]}
@@ -92,11 +92,6 @@ def cmd_run(args: argparse.Namespace) -> int:
         print(f"Fuentes desconocidas: {', '.join(unknown)}. Usa 'observatorio list'.", file=sys.stderr)
         return 2
     chosen = [BY_ID[i] for i in args.fuentes] if args.fuentes else REGISTRY
-    if (
-        any(s.id != "mgn-municipios" for s in chosen)
-        and not (data_dir() / "referencia" / "municipios.geojson").exists()
-    ):
-        chosen = [BY_ID["mgn-municipios"], *[s for s in chosen if s.id != "mgn-municipios"]]
     since = date.fromisoformat(args.desde) if args.desde else None
     failures = run_sources(chosen, since, args.force)
     return 1 if failures else 0

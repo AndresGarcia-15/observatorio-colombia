@@ -68,6 +68,10 @@ Una fuente que falla no detiene a las demás. Su error queda en `estado.json`, s
 | `rango_diario_anormal` | más de 25 °C entre la mínima y la máxima del día |
 | `acumulado_anormal` | más de 400 mm de lluvia en un día |
 
+**Capa de municipios incluida en el paquete.** El geoportal del DANE corta las conexiones que vienen de centros de datos en la nube (como los de GitHub Actions) y el servicio del IGAC tarda cerca de un minuto por página. Por eso el paquete trae una copia comprimida del MGN 2024 (660 KB). La fuente `mgn-municipios` solo intenta renovarla cada 30 días y, si falla, deja un aviso sin detener a las demás fuentes.
+
+**Solo IPv4.** Los runners de GitHub Actions no tienen salida por IPv6, y algunos servidores (NASA FIRMS) anuncian direcciones IPv6. El cliente HTTP fuerza IPv4 para no perder tiempo en conexiones que nunca responden.
+
 **Ubicación por geometría, no por nombre.** Los nombres de municipio varían entre entidades («Bogotá D.C.», «BOGOTA, D.C.», «Santafé de Bogotá»). Todos los puntos se ubican con los polígonos del MGN, que devuelven el código DIVIPOLA.
 
 **Hora de Colombia.** El pipeline trabaja en UTC-5. Los días del IDEAM son días locales y el día en curso nunca se publica porque está incompleto.

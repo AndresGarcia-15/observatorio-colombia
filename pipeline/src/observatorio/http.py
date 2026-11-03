@@ -16,21 +16,23 @@ RETRY_STATUS = {429, 500, 502, 503, 504}
 
 
 class HttpClient:
-    def __init__(self, timeout: float = 120.0, retries: int = 4, backoff: float = 3.0) -> None:
+    def __init__(self, timeout: float = 120.0, retries: int = 3, backoff: float = 3.0) -> None:
         self.retries = retries
         self.backoff = backoff
         self._client = httpx.Client(
-            timeout=httpx.Timeout(timeout, connect=30.0),
+            timeout=httpx.Timeout(timeout, connect=15.0),
             headers={"User-Agent": USER_AGENT},
             follow_redirects=True,
-            transport=httpx.HTTPTransport(retries=2),
+            # Solo IPv4: los runners de GitHub Actions no tienen salida por IPv6 y algunos
+            # servidores (NASA FIRMS) anuncian direcciones IPv6 que nunca responden.
+            transport=httpx.HTTPTransport(retries=1, local_address="0.0.0.0"),
         )
 
-    def get(self, url: str, params: dict[str, Any] | None = None) -> httpx.Response:
+    def get(self, url: str, params: dict[str, Any] | None = None, timeout: float | None = None) -> httpx.Response:
         last: Exception | None = None
         for attempt in range(1, self.retries + 1):
             try:
-                resp = self._client.get(url, params=params)
+                resp = self._client.get(url, params=params, timeout=timeout or self._client.timeout)
                 if resp.status_code in RETRY_STATUS:
                     raise httpx.HTTPStatusError(f"HTTP {resp.status_code}", request=resp.request, response=resp)
                 resp.raise_for_status()
@@ -46,8 +48,8 @@ class HttpClient:
         assert last is not None
         raise last
 
-    def get_json(self, url: str, params: dict[str, Any] | None = None) -> Any:
-        return self.get(url, params).json()
+    def get_json(self, url: str, params: dict[str, Any] | None = None, timeout: float | None = None) -> Any:
+        return self.get(url, params, timeout).json()
 
     def get_text(self, url: str, params: dict[str, Any] | None = None) -> str:
         return self.get(url, params).text

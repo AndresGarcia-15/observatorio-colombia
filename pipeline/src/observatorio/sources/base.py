@@ -8,7 +8,7 @@ from datetime import date, datetime
 from functools import cached_property
 from pathlib import Path
 
-from ..geo import MunicipioLocator
+from ..geo import MunicipioLocator, reference_path
 from ..http import HttpClient
 
 
@@ -23,10 +23,7 @@ class RunContext:
 
     @cached_property
     def locator(self) -> MunicipioLocator:
-        path = self.data_dir / "referencia" / "municipios.geojson"
-        if not path.exists():
-            raise RuntimeError("Falta la capa de municipios. Ejecuta primero la fuente 'mgn-municipios'.")
-        return MunicipioLocator.from_geojson(path)
+        return MunicipioLocator.from_geojson(reference_path(self.data_dir))
 
 
 @dataclass
@@ -37,6 +34,7 @@ class RunResult:
     coverage: tuple[str | None, str | None] = (None, None)
     files: list[str] = field(default_factory=list)
     message: str = ""
+    warning: bool = False  # funcionó con un respaldo; no cuenta como falla
 
 
 class Source(ABC):

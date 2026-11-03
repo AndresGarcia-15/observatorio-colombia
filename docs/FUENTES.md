@@ -6,7 +6,7 @@ El pipeline revisa todas las fuentes cada día, pero cada entidad publica a su p
 
 | Id | Datos | Entidad | Ritmo de la entidad | Desde | Licencia |
 |---|---|---|---|---|---|
-| `mgn-municipios` | Límites municipales (1.122) | DANE, respaldo IGAC | anual | MGN 2024 | Uso libre con atribución |
+| `mgn-municipios` | Límites municipales (1.121 polígonos) | DANE; copia incluida en el paquete y renovación desde IGAC | anual | MGN 2024 | Uso libre con atribución |
 | `ideam-temperatura` | Temperatura media, mínima y máxima diaria por estación | IDEAM ([sbwg-7ju4](https://www.datos.gov.co/d/sbwg-7ju4)) | diario | últimos 60 días (ampliable) | CC BY-SA 4.0 |
 | `ideam-precipitacion` | Lluvia total diaria por estación | IDEAM ([s54a-sgyg](https://www.datos.gov.co/d/s54a-sgyg)) | diario | últimos 60 días (ampliable) | CC BY-SA 4.0 |
 | `firms-fuegos` | Fuegos activos VIIRS (Suomi NPP, NOAA-20, NOAA-21) | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/) | varias veces al día | se acumula desde la primera ejecución | Datos abiertos de la NASA, con cita |
