@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "generado": "2026-11-07T11:50:31-05:00",
+  "fuentes": {
+    "firms-fuegos": {
+      "id": "firms-fuegos",
+      "nombre": "Fuegos activos (VIIRS)",
+      "entidad": "NASA FIRMS",
+      "url": "https://firms.modaps.eosdis.nasa.gov/",
+      "licencia": "Datos abiertos de la NASA; citar a NASA FIRMS",
+      "cadencia": "tiempo casi real",
+      "estado": "ok",
+      "mensaje": "680 detecciones en Colombia en los últimos 7 días.",
+      "ultima_revision": "2026-11-07T11:50:31-05:00",
+      "ultimo_cambio": "2026-11-07T11:50:31-05:00",
+      "filas": 2078,
+      "filas_nuevas": 153,
+      "cobertura": {
+        "desde": "2026-10-27",
+        "hasta": "2026-11-07"
+      },
+      "archivos": [
+        "incendios/firms/2026-11.parquet"
+      ]
+    },
+    "ideam-precipitacion": {
+      "id": "ideam-precipitacion",
+      "nombre": "Precipitación, total diario por estación",
+      "entidad": "IDEAM",
+      "url": "https://www.datos.gov.co/d/s54a-sgyg",
+      "licencia": "CC BY-SA 4.0 (datos.gov.co)",
+      "cadencia": "diaria (lecturas cada 1 a 60 minutos)",
+      "estado": "ok",
+      "mensaje": "507 estaciones entre 2026-11-02 y 2026-11-06; 0 de 2491 días marcados como sospechosos.",
+      "ultima_revision": "2026-11-07T11:50:31-05:00",
+      "ultimo_cambio": "2026-11-07T11:50:31-05:00",
+      "filas": 29542,
+      "filas_nuevas": 499,
+      "cobertura": {
+        "desde": "2026-09-04",
+        "hasta": "2026-11-06"
+      },
+      "archivos": [
+        "clima/ideam_precipitacion/2026-11.parquet",
+        "clima/ideam_precipitacion_estaciones.parquet"
+      ]
+    },
+    "ideam-temperatura": {
+      "id": "ideam-temperatura",
+      "nombre": "Temperatura del aire, resumen diario por estación",
+      "entidad": "IDEAM",
+      "url": "https://www.datos.gov.co/d/sbwg-7ju4",
+      "licencia": "CC BY-SA 4.0 (datos.gov.co)",
+      "cadencia": "diaria (lecturas cada 1 a 60 minutos)",
+      "estado": "ok",
+      "mensaje": "330 estaciones entre 2026-11-02 y 2026-11-06; 39 de 1619 días marcados como sospechosos.",
+      "ultima_revision": "2026-11-07T11:50:31-05:00",
+      "ultimo_cambio": "2026-11-07T11:50:31-05:00",
+      "filas": 19347,
+      "filas_nuevas": 326,
+      "cobertura": {
+        "desde": "2026-09-04",
+        "hasta": "2026-11-06"
+      },
+      "archivos": [
+        "clima/ideam_temperatura/2026-11.parquet",
+        "clima/ideam_temperatura_estaciones.parquet"
+      ]
+    },
+    "mgn-municipios": {
+      "id": "mgn-municipios",
+      "nombre": "Límites municipales (Marco Geoestadístico Nacional)",
+      "entidad": "DANE",
+      "url": "https://geoportal.dane.gov.co/servicios/descarga-y-metadatos/datos-geoestadisticos/",
+      "licencia": "Uso libre con atribución al DANE",
+      "cadencia": "anual",
+      "estado": "sin_cambios",
+      "mensaje": "Capa vigente (DANE MGN 2024, copia incluida en el repositorio).",
+      "ultima_revision": "2026-11-07T11:50:31-05:00",
+      "ultimo_cambio": null,
+      "filas": 1121,
+      "filas_nuevas": 0,
+      "cobertura": {
+        "desde": null,
+        "hasta": null
+      },
+      "archivos": []
+    },
+    "usgs-sismos": {
+      "id": "usgs-sismos",
+      "nombre": "Sismos de magnitud 4 o más",
+      "entidad": "Servicio Geológico de Estados Unidos (USGS)",
+      "url": "https://earthquake.usgs.gov/earthquakes/search/",
+      "licencia": "Dominio público (USGS)",
+      "cadencia": "tiempo real",
+      "estado": "ok",
+      "mensaje": "177 eventos consultados desde 2026-10-04; 163 revisados por el USGS.",
+      "ultima_revision": "2026-11-07T11:50:31-05:00",
+      "ultimo_cambio": "2026-11-07T11:50:31-05:00",
+      "filas": 7237,
+      "filas_nuevas": 1,
+      "cobertura": {
+        "desde": "1973-01-05",
+        "hasta": "2026-11-06"
+      },
+      "archivos": [
+        "sismos/usgs/2026.parquet"
+      ]
+    }
+  }
+}
